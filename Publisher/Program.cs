@@ -1,10 +1,22 @@
-﻿namespace Publisher
+﻿using EasyNetQ;
+using Messages;
+
+namespace Publisher
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            using (var bus = RabbitHutch.CreateBus("host=localhost"))
+            {
+                var input = String.Empty;
+                Console.WriteLine("Enter a message. 'Quit' to quit.");
+                while ((input = Console.ReadLine()) != "Quit")
+                {
+                    bus.PubSub.Publish(new TextMessage { Text = input });
+                    Console.WriteLine("Message published!");
+                }
+            }
         }
     }
 }
